@@ -1,0 +1,5 @@
+[config]
+name = "Moondalup City Square Parking"
+spaces = 192
+broker_host = '127.0.0.1'
+broker_port = 1883
