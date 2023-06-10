@@ -29,14 +29,12 @@ Finally, you can use `yaml` if you prefer.
 """
 
 
-def get_config(filename: str = "config.toml") -> dict:
-    """Get and parse config file"""
-
+def parse_config() -> dict:
+    """Parse the config file and return the values as a dictionary"""
     import tomli
-    with open(filename, mode='rb') as fp:
-        config = tomli.load(fp)
+    with open("config.toml", "rb") as file:
+        config = tomli.load(file)
+
     return config
 
-
-c = get_config()
-print(c)
+# parse_config()

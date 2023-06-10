@@ -1,5 +1,9 @@
 [config]
-name = "Moondalup City Square Parking"
-spaces = 192
-broker_host = '127.0.0.1'
-broker_port = 1883
+broker = '127.0.0.1'
+port = 1883
+name = 'Moondalup City Square Parking'
+location = 'JS test location'
+total-spaces = 192
+total-cars = 0
+topic-root = 'JS test-root'
+topic-qualifier = 'JS test-qualifer'
