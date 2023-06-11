@@ -32,9 +32,9 @@ Finally, you can use `yaml` if you prefer.
 def parse_config() -> dict:
     """Parse the config file and return the values as a dictionary"""
     import tomli
-    with open("config.toml", "rb") as file:
-        config = tomli.load(file)
 
+    with open("config.toml", "r") as file:
+        config_string = file.read()
+
+    config = tomli.loads(config_string)
     return config
-
-# parse_config()
