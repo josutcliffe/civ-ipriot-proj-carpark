@@ -70,6 +70,8 @@ class Display(mqtt_device.MqttDevice):
     fields = ['Available bays', 'Temperature', 'At']
 
     def __init__(self, config):
+        self.temperature = 0
+        self.available_spaces = 192
         super().__init__(config)
         self.window = WindowedDisplay(
             'Moondalup', Display.fields)
@@ -78,22 +80,44 @@ class Display(mqtt_device.MqttDevice):
         updater.start()
         self.window.show()
 
-        # self.client.on_message = self.on_message
-        # self.client.subscribe('display')
-        # self.client.loop_forever()
+    def on_message(self, client, userdata, message):
+        payload = message.payload.decode()
+        self.display(*payload.split(','))
+        temperature = payload.strip().split()[5]
+        self.temperature = temperature
+        print(temperature)
+        available_spaces = payload.strip().split()[3]
+        self.available_spaces = available_spaces
+        print(available_spaces)
 
     def check_updates(self):
+        self.client.subscribe('display')
+        self.client.on_message = self.on_message
+        self.client.loop_start()
         # TODO: This is where you should manage the MQTT subscription
         while True:
             # NOTE: Dictionary keys *must* be the same as the class fields
             field_values = dict(zip(Display.fields, [
-                f'{random.randint(0, 150):03d}',
-                f'{random.randint(0, 45):02d}℃',
+                f'{int(self.available_spaces):03d}',
+                f'{int(self.temperature):02d}℃',
                 time.strftime("%H:%M:%S")]))
             # Pretending to wait on updates from MQTT
-            time.sleep(random.randint(1, 10))
+            # time.sleep(random.randint(1, 10))
             # When you get an update, refresh the display.
             self.window.update(field_values)
+
+    # def on_message(self, client, userdata, message):
+    #     payload = message.payload.decode()
+    #     self.display(*payload.split(','))
+    #     temperature = payload.strip().split()[1]
+    #     self.temperature = temperature
+    #     print(self.temperature)
+    #     available_spaces = payload.strip().split()[3]
+    #     print(available_spaces)
+    #     timestamp = payload.strip().split()[5]
+    #     print(timestamp)
+    #     # TODO: Parse the message and extract free spaces,\
+    #     #  temperature, time
 
     def display(self, *args):
         print('*' * 20)
@@ -102,12 +126,6 @@ class Display(mqtt_device.MqttDevice):
             time.sleep(1)
 
         print('*' * 20)
-
-    def on_message(self, client, userdata, msg):
-        data = msg.payload.decode()
-        self.display(*data.split(','))
-        # TODO: Parse the message and extract free spaces,\
-        #  temperature, time
 
 
 if __name__ == '__main__':

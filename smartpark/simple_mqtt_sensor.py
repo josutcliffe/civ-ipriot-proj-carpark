@@ -29,30 +29,11 @@ class Sensor(mqtt_device.MqttDevice):
         """Returns the current temperature"""
         return random.randint(10, 35)
 
-    def on_detection(self, message):
-        """Triggered when a detection occurs"""
-        self.client.publish('sensor', message)
-
-    def start_sensing(self):
-        """ A blocking event loop that waits for detection events, in this
-        case Enter presses"""
-        while True:
-            print("Press E when 🚗 entered!")
-            print("Press X when 🚖 exited!")
-            detection = input("E or X> ").upper()
-            if detection == 'E':
-                self.on_detection(f"entered, {self.temperature}")
-            else:
-                self.on_detection(f"exited, {self.temperature}")
-
     def incoming_car(self):
         # TODO: implement this method to publish the detection via MQTT
         client = mqtt.Client('sensor')
-        print(client)
         broker = config['config']['broker']
         port = config['config']['port']
-        print(broker)
-        print(port)
         client.connect(broker, port)
         client.publish('lot/sensor', 'entry')
         print("Car goes in")
@@ -61,11 +42,8 @@ class Sensor(mqtt_device.MqttDevice):
     def outgoing_car(self):
         # TODO: implement this method to publish the detection via MQTT
         client = mqtt.Client('sensor')
-        print(client)
         broker = config['config']['broker']
         port = config['config']['port']
-        print(broker)
-        print(port)
         client.connect(broker, port)
         client.publish('lot/sensor', 'exit')
         print("Car goes out")
