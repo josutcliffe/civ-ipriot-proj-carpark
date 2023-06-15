@@ -1,10 +1,16 @@
-""""Demonstrates a simple implementation of an 'event' listener that triggers
-a publication via mqtt"""
-import random
+"""
+    Course:     ICT40120 Cert IV in IT (Programming)
+    Name:       Joshua Sutcliffe
+    Unit:       IP4RIoT (Cluster)
+    Assessment: AT3 Project
+    Date:       June 2023
+    Purpose:    Sensor class to simulate cars entering and exiting car park
+                Ensure mosquitto -v running in terminal.
+"""
+
 import tkinter as tk
 import mqtt_device
 import paho.mqtt.client as mqtt
-
 from config_parser import parse_config
 
 
@@ -24,13 +30,7 @@ class Sensor(mqtt_device.MqttDevice):
 
         self.root.mainloop()
 
-    @property
-    def temperature(self):
-        """Returns the current temperature"""
-        return random.randint(10, 35)
-
     def incoming_car(self):
-        # TODO: implement this method to publish the detection via MQTT
         client = mqtt.Client('sensor')
         broker = config['config']['broker']
         port = config['config']['port']
@@ -40,7 +40,6 @@ class Sensor(mqtt_device.MqttDevice):
         client.loop()
 
     def outgoing_car(self):
-        # TODO: implement this method to publish the detection via MQTT
         client = mqtt.Client('sensor')
         broker = config['config']['broker']
         port = config['config']['port']
@@ -51,7 +50,6 @@ class Sensor(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    # TODO: Read previous config from file instead of embedding
     config = parse_config()
-    print("Loading incoming/outgoing car display")
+    print("Loading incoming/outgoing car simulator")
     Sensor()

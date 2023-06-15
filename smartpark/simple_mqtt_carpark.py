@@ -1,3 +1,13 @@
+"""
+    Course:     ICT40120 Cert IV in IT (Programming)
+    Name:       Joshua Sutcliffe
+    Unit:       IP4RIoT (Cluster)
+    Assessment: AT3 Project
+    Date:       June 2023
+    Purpose:    Carpark object that defines the carpark attributes.
+                Ensure mosquitto -v running in terminal.
+"""
+
 from datetime import datetime
 import random
 import mqtt_device
@@ -21,16 +31,6 @@ class CarPark(mqtt_device.MqttDevice):
         available = self.total_spaces - self.total_cars
         return max(available, 0)
 
-
-    @property
-    def temperature(self):
-        return self._temperature
-
-
-    @temperature.setter
-    def temperature(self, value):
-        self._temperature = value
-
     def _publish_event(self):
         readable_time = datetime.now().strftime('%H:%M')
         self.temperature = random.randint(0, 45)
@@ -48,8 +48,6 @@ class CarPark(mqtt_device.MqttDevice):
         )
         self.client.publish('display', message)
 
-
-
     def on_car_entry(self):
         self.total_cars += 1
         self._publish_event()
@@ -61,8 +59,6 @@ class CarPark(mqtt_device.MqttDevice):
     def on_message(self, client, userdata, message):
         payload = message.payload.decode()
         print(f"Message received:")
-        # TODO: Extract temperature from payload
-        # self.temperature = ... # Extracted value
         if 'exit' in payload:
             self.on_car_exit()
         else:
@@ -70,8 +66,6 @@ class CarPark(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    # TODO: Read config from file
     config = parse_config()
+    print("Carpark initialised")
     car_park = CarPark(config)
-    print("Carpark initialized")
-    print("Carpark initialized")

@@ -1,6 +1,14 @@
+"""
+    Course:     ICT40120 Cert IV in IT (Programming)
+    Name:       Joshua Sutcliffe
+    Unit:       IP4RIoT (Cluster)
+    Assessment: AT3 Project
+    Date:       June 2023
+    Purpose:    Display for car park that shows available spaces, temperature at time of car entry/exit, and time.
+                Ensure mosquitto -v running in terminal.
+"""
+
 import mqtt_device
-import time
-import random
 import threading
 import time
 import tkinter as tk
@@ -70,8 +78,8 @@ class Display(mqtt_device.MqttDevice):
     fields = ['Available bays', 'Temperature', 'At']
 
     def __init__(self, config):
-        self.temperature = 0
-        self.available_spaces = 192
+        self.temperature = 25  # set a default temperature
+        self.available_spaces = 192  # set default number of spaces
         super().__init__(config)
         self.window = WindowedDisplay(
             'Moondalup', Display.fields)
@@ -83,52 +91,33 @@ class Display(mqtt_device.MqttDevice):
     def on_message(self, client, userdata, message):
         payload = message.payload.decode()
         self.display(*payload.split(','))
-        temperature = payload.strip().split()[5]
+        temperature = payload.strip().split()[5]  # get temperature value from payload
         self.temperature = temperature
-        print(temperature)
-        available_spaces = payload.strip().split()[3]
+        available_spaces = payload.strip().split()[3]  # get available_spaces value from payload
         self.available_spaces = available_spaces
-        print(available_spaces)
 
     def check_updates(self):
         self.client.subscribe('display')
         self.client.on_message = self.on_message
         self.client.loop_start()
-        # TODO: This is where you should manage the MQTT subscription
         while True:
-            # NOTE: Dictionary keys *must* be the same as the class fields
             field_values = dict(zip(Display.fields, [
-                f'{int(self.available_spaces):03d}',
-                f'{int(self.temperature):02d}℃',
+                f'{int(self.available_spaces):03d}',  # update display with actual available spaces
+                f'{int(self.temperature):02d}℃',  # update display with actual temperature values
                 time.strftime("%H:%M:%S")]))
-            # Pretending to wait on updates from MQTT
-            # time.sleep(random.randint(1, 10))
-            # When you get an update, refresh the display.
-            self.window.update(field_values)
 
-    # def on_message(self, client, userdata, message):
-    #     payload = message.payload.decode()
-    #     self.display(*payload.split(','))
-    #     temperature = payload.strip().split()[1]
-    #     self.temperature = temperature
-    #     print(self.temperature)
-    #     available_spaces = payload.strip().split()[3]
-    #     print(available_spaces)
-    #     timestamp = payload.strip().split()[5]
-    #     print(timestamp)
-    #     # TODO: Parse the message and extract free spaces,\
-    #     #  temperature, time
+            self.window.update(field_values)
 
     def display(self, *args):
         print('*' * 20)
-        for val in args:
-            print(val)
+        for value in args:
+            print(value)
             time.sleep(1)
 
         print('*' * 20)
 
 
 if __name__ == '__main__':
-    # TODO: Read config from file
     config = parse_config()
+    print("Carpark display initialised")
     display = Display(config)

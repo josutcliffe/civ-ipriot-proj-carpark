@@ -1,39 +1,18 @@
-"""A class or function to parse the config file and return the values as a dictionary.
-
-The config file itself can be any of the following formats:
-
-- ryo: means 'roll your own' and is a simple text file with key-value pairs separated by an equals sign. For example:
-```
-location = "Moondalup City Square Parking"
-number_of_spaces = 192
-```
-**you** read the file and parse it into a dictionary.
-- json: a json file with key-value pairs. For example:
-```json
-{location: "Moondalup City Square Parking", number_of_spaces: 192}
-```
-json is built in to python, so you can use the json module to parse it into a dictionary.
-- toml: a toml file with key-value pairs. For example:
-```toml
-[location]
-name = "Moondalup City Square Parking"
-spaces = 192
-```
-toml is part of the standard library in python 3.11, otherwise you need to install tomli to parse it into a dictionary.
-```bash
-python -m pip install tomli
-```
-see [realpython.com](https://realpython.com/python-toml/) for more info.
-
-Finally, you can use `yaml` if you prefer.
+"""
+    Course:     ICT40120 Cert IV in IT (Programming)
+    Name:       Joshua Sutcliffe
+    Unit:       IP4RIoT (Cluster)
+    Assessment: AT3 Project
+    Date:       June 2023
+    Purpose:    Parser code that returns values of config file, to initialise CarPark, Display and Sensor.
+                Ensure mosquitto -v running in terminal.
 """
 
 
 def parse_config() -> dict:
     """Parse the config file and return the values as a dictionary"""
     import tomli
-
-    with open("config.toml", "r") as file:
+    with open("../smartpark/config.toml", "r") as file:
         config_string = file.read()
 
     config = tomli.loads(config_string)
